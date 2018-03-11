@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html ng-app="ttt">
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script>
+        angular.module("ttt", [])
+            .controller('TTTListController', function ($http) {
+
+                var tttList = this;
+                tttList.topN = 1;
+                tttList.List = [];
+
+
+                tttList.getList = function () {
+                    $http.get("frequency/" + tttList.topN).then(function (res) {
+
+                        if (res.status === 200) {
+                            tttList.List = res.data;
+                        }
+                    })
+                }
+
+            })
+
+    </script>
+</head>
+<body>
+<div ng-controller="TTTListController as tttList">
+
+    <form>
+        <div class="form-group">
+            <label for="numberN">The Number N</label>
+            <input ng-model="tttList.topN" type="number" class="form-control" id="numberN"
+                   placeholder="Enter number N">
+        </div>
+
+        <button ng-click="tttList.getList()" type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <table class="table" ng-if="tttList.List.length > 0">
+        <thead>
+        <tr>
+            <th scope="col">Word</th>
+            <th scope="col">Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="w in tttList.List">
+            <td>{{w.word}}</td>
+            <td>{{w.frequency}}</td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
